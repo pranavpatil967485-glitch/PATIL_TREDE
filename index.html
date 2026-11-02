@@ -522,3 +522,67 @@ function stopTradingBot() {
 }
 
 updateDashboard();
+// MarketDashboard.jsx
+import React, { useState, useEffect } from 'react';
+
+function MarketDashboard() {
+  const [stocks, setStocks] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // API मधून डेटा आणण्यासाठी useEffect
+  useEffect(() => {
+    const fetchMarketData = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/market');
+        const result = await response.json();
+        if (result.success) {
+          setStocks(result.data);
+        }
+      } catch (error) {
+        console.error('API Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMarketData();
+
+    // लाइव्ह अपडेटसाठी दर ५ सेकंदांनी API कॉल (Option)
+    const interval = setInterval(fetchMarketData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (loading) return <div style={{ padding: '20px' }}>Loading Live Market Data...</div>;
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <h2>📈 Paper Trading - Live Market Dashboard</h2>
+      <table border="1" cellPadding="10" style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+        <thead>
+          <tr style={{ backgroundColor: '#f2f2f2' }}>
+            <th>Symbol</th>
+            <th>Price (₹)</th>
+            <th>Change</th>
+            <th>% Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stocks.map((item, index) => (
+            <tr key={index} style={{ textAlign: 'center' }}>
+              <td><strong>{item.symbol}</strong></td>
+              <td>{item.price}</td>
+              <td style={{ color: item.change.startsWith('+') ? 'green' : 'red' }}>
+                {item.change}
+              </td>
+              <td style={{ color: item.percent.startsWith('+') ? 'green' : 'red' }}>
+                {item.percent}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+export default MarketDashboard;
