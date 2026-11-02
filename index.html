@@ -611,46 +611,7 @@ export default {
       "XAUUSD":  { symbol: "XAUUSD", price: 2340.80, rsi: 48.9, signal: "SELL" }
     };
 
-    // १. जर युजरने सर्व डेटा मागितला (किंवा डॅशबोर्डने कॉल केला तर)
-    if (path === "/api/market" || path === "/") {
-      // किमतींमध्ये थोडे रँडम बदल करून लाईव्ह फिलिंग देणे
-      const updatedData = Object.values(marketDatabase).map(item => {
-        const variation = (Math.random() * 20 - 10);
-        return {
-          ...item,
-          price: +(item.price + variation).toFixed(2),
-          rsi: +(item.rsi + (Math.random() * 2 - 1)).toFixed(1)
-        };
-      });
-
-      return new Response(JSON.stringify({ success: true, data: updatedData }), {
-        headers: corsHeaders
-      });
-    }
-
-    // २. जर विशिष्ट सिम्बॉल मागितला (उदा. /api/market/BTCUSDT)
-    if (path.startsWith("/api/market/")) {
-      const symbol = path.split("/")[3]?.toUpperCase();
-      const stock = marketDatabase[symbol];
-
-      if (stock) {
-        // थोडा बदल करून डेटा पाठवणे
-        const variation = (Math.random() * 10 - 5);
-        const liveStock = {
-          ...stock,
-          price: +(stock.price + variation).toFixed(2)
-        };
-        return new Response(JSON.stringify(liveStock), { headers: corsHeaders });
-      } else {
-        return new Response(JSON.stringify({ error: "Symbol not found" }), {
-          status: 404,
-          headers: corsHeaders
-        });
-      }
-    }
-
-    // ३. इतर कोणत्याही पाथसाठी
-    return new Response(JSON.stringify({ error: "Endpoint not found" }), {
-      status: 404,
+    
    
- 
+
+             
