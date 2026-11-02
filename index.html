@@ -298,7 +298,83 @@ function stopBot() {
 
 function getTradeHistory() {
   return trades;
+}<div class="bot-dashboard">
+
+  <h1>PATIL_TREDE AI BOT</h1>
+  <h3 id="botStatus">BOT STATUS: STOPPED</h3>
+
+  <div class="bot-buttons">
+    <button onclick="startTradingBot()">
+      START BOT
+    </button>
+
+    <button onclick="stopTradingBot()">
+      STOP BOT
+    </button>
+  </div>
+
+  <h2>MARKET SCANNER</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Market</th>
+        <th>Price</th>
+        <th>RSI</th>
+        <th>Signal</th>
+      </tr>
+    </thead>
+
+    <tbody id="marketData">
+      <tr><td>BTCUSDT</td><td>-</td><td>-</td><td>WAIT</td></tr>
+      <tr><td>ETHUSDT</td><td>-</td><td>-</td><td>WAIT</td></tr>
+      <tr><td>SOLUSDT</td><td>-</td><td>-</td><td>WAIT</td></tr>
+      <tr><td>XAUUSD</td><td>-</td><td>-</td><td>WAIT</td></tr>
+    </tbody>
+  </table>
+
+  <h2>TRADE HISTORY</h2>
+
+  <div id="tradeHistory">
+    No trades yet.
+  </div>
+
+</div>
+
+<style>
+.bot-dashboard {
+  background: #101827;
+  color: white;
+  padding: 25px;
+  border-radius: 15px;
+  font-family: Arial;
 }
+
+.bot-buttons button {
+  padding: 13px 25px;
+  margin: 8px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+}
+
+td, th {
+  padding: 12px;
+  border: 1px solid #34445c;
+  text-align: center;
+}
+
+h1 {
+  color: #00d9ff;
+}
+</style>
 
 module.exports = {
   startBot,
@@ -365,3 +441,83 @@ Contact Support
 </main>
 </body>
 </html>
+let botStatus = false;
+let botTimer = null;
+
+const API_URL = "/api/market";
+
+async function getMarket(symbol) {
+  try {
+    const response = await fetch(
+      `${API_URL}/${symbol}`
+    );
+
+    if (!response.ok) {
+      throw new Error("API unavailable");
+    }
+
+    return await response.json();
+
+  } catch (error) {
+    return {
+      symbol,
+      price: null,
+      rsi: null,
+      signal: "DATA ERROR"
+    };
+  }
+}
+
+async function updateDashboard() {
+
+  const symbols = [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XAUUSD"
+  ];
+
+  const tbody = document.getElementById("marketData");
+
+  const results = await Promise.all(
+    symbols.map(symbol => getMarket(symbol))
+  );
+
+  tbody.innerHTML = results.map(data => `
+    <tr>
+      <td>${data.symbol}</td>
+      <td>${data.price ?? "-"}</td>
+      <td>${data.rsi ?? "-"}</td>
+      <td>${data.signal}</td>
+    </tr>
+  `).join("");
+}
+
+function startTradingBot() {
+
+  if (botStatus) return;
+
+  botStatus = true;
+
+  document.getElementById("botStatus").innerText =
+    "BOT STATUS: RUNNING (PAPER MODE)";
+
+  updateDashboard();
+
+  botTimer = setInterval(
+    updateDashboard,
+    60000
+  );
+}
+
+function stopTradingBot() {
+
+  botStatus = false;
+
+  clearInterval(botTimer);
+
+  document.getElementById("botStatus").innerText =
+    "BOT STATUS: STOPPED";
+}
+
+updateDashboard();
