@@ -1,1 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PATIL_TREDE</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#080d18;
+ color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ background:#111a2b;
+ padding:22px;
+ border-bottom:1px solid #26334a;
+}
+h1{color:#00d9a0;margin:0}
+main{padding:18px}
+.card{
+ background:#131e30;
+ border:1px solid #263750;
+ border-radius:12px;
+ padding:18px;
+ margin-bottom:15px;
+}
+h2{font-size:19px}
+.status{color:#00d9a0}
+button{
+ background:#00b88a;
+ color:#001b14;
+ border:0;
+ padding:13px 20px;
+ border-radius:8px;
+ font-weight:bold;
+}
+small{color:#aab6ca}
+</style>
+</head>
+<body>
 
+<header>
+<h1>PATIL_TREDE</h1>
+<p>Trading Dashboard</p>
+</header>
+
+<main>
+<div class="card">
+<h2>Market Dashboard</h2>
+<p class="status">● Dashboard Online</p>
+<small>Market prices are not connected yet.</small>
+</div>
+
+<div class="card">
+<h2>Broker Connection</h2>
+<p id="connection">Not Connected</p>
+<small>Broker API integration is not configured.</small>
+</div>
+
+<div class="card">
+<h2>Market Scanner</h2>
+<p>BTC / ETH / SOL</p>
+<p>Live data: Not Connected</p>
+</div>
+
+<div class="card">
+<h2>Risk Management</h2>
+<p>Stop Loss: Not Configured</p>
+<p>Risk Monitor: Inactive</p>
+</div>
+
+<div class="card">
+<h2>Bot Status</h2>
+<p>Automatic Trading: Disabled</p>
+<button onclick="alert('Trading is not enabled. This is an informational dashboard.')">
+Bot Status
+</button>
+</div>
+
+<div class="card">
+<h2>Trade History</h2>
+<p>No trading records available.</p>
+</div>
+</main>
+
+</body>
+                                  </html>
