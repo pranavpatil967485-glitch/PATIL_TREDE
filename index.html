@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PATIL_TREDE</title>
+
 <style>
-*{box-sizing:border-box}
 body{
  margin:0;
  background:#080d18;
@@ -14,109 +14,77 @@ body{
 }
 header{
  background:#111a2b;
- padding:22px;
- border-bottom:1px solid #26334a;
+ padding:20px;
+ text-align:center;
 }
-h1{color:#00d9a0;margin:0}
-main{padding:18px}
+h1{color:#00d9a0}
+main{padding:15px}
 .card{
  background:#131e30;
  border:1px solid #263750;
  border-radius:12px;
- padding:18px;
+ padding:15px;
  margin-bottom:15px;
 }
-h2{font-size:19px}
+.chart{
+ width:100%;
+ height:450px;
+ border:0;
+ border-radius:8px;
+}
 .status{color:#00d9a0}
 button{
  background:#00b88a;
- color:#001b14;
+ padding:12px 18px;
  border:0;
- padding:13px 20px;
  border-radius:8px;
- font-weight:bold;
 }
-small{color:#aab6ca}
 </style>
 </head>
+
 <body>
 
 <header>
 <h1>PATIL_TREDE</h1>
-<p>Trading Dashboard</p>
+<p>Market Learning Dashboard</p>
 </header>
 
 <main>
+
 <div class="card">
-<h2>Market Dashboard</h2>
-<p class="status">● Dashboard Online</p>
-<small>Market prices are not connected yet.</small>
+<h2>Dashboard</h2>
+<p class="status">● Online</p>
 </div>
 
 <div class="card">
-<h2>Broker Connection</h2>
-<p id="connection">Not Connected</p>
-<small>Broker API integration is not configured.</small>
+<h2>Bitcoin Chart</h2>
+
+<iframe
+class="chart"
+src="https://s.tradingview.com/widgetembed/?symbol=BINANCE%3ABTCUSDT&interval=15&theme=dark&style=1&timezone=Asia%2FKolkata&withdateranges=true&hide_side_toolbar=false&allow_symbol_change=true"
+loading="lazy"
+allowfullscreen>
+</iframe>
+
 </div>
 
 <div class="card">
-<h2>Market Scanner</h2>
-<p>BTC / ETH / SOL</p>
-<p>Live data: Not Connected</p>
+<h2>Broker Information</h2>
+<p>Connection Status: Not Connected</p>
 </div>
 
 <div class="card">
-<h2>Risk Management</h2>
-<p>Stop Loss: Not Configured</p>
-<p>Risk Monitor: Inactive</p>
+<h2>Demo Dashboard</h2>
+<p>Simulation Only</p>
 </div>
 
 <div class="card">
-<h2>Bot Status</h2>
-<p>Automatic Trading: Disabled</p>
-<button onclick="alert('Trading is not enabled. This is an informational dashboard.')">
-Bot Status
+<h2>Contact Support</h2>
+<button onclick="alert('PATIL_TREDE Support')">
+Contact Support
 </button>
 </div>
 
-<div class="card">
-<h2>Trade History</h2>
-<p>No trading records available.</p>
-</div>
 </main>
-
 </body>
-                     <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PATIL_TREDE</title>
-
-<style>
-*{box-sizing:border-box}
-body{
- margin:0;
- background:#07111f;
- color:white;
- font-family:Arial,sans-serif;
-}
-header{
- background:#101f33;
- padding:20px;
- text-align:center;
- border-bottom:2px solid #00d99a;
-}
-header h1{color:#00e6a0;margin:0}
-nav{
- display:flex;
- flex-wrap:wrap;
- justify-content:center;
- gap:10px;
- padding:15px;
-}
-button{
- background:#00c990;
- border:0;
- padding:12px 18px;
- border-radius:7px             </html>
+</html>
