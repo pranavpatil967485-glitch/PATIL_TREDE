@@ -65,11 +65,247 @@ button{
 type="text/javascript"
 src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js"
 async>
-{
-  "symbols": [
-    {"proName":"BINANCE:BTCUSDT","title":"Bitcoin"},
-    {"proName":"BINANCE:ETHUSDT","title":"Ethereum"},
-    {"proName":"BINANCE:SOLUSDT","title":"Solana"}
+{const SYMBOLS = [
+  "BTCUSDT",
+  "ETHUSDT",
+  "SOLUSDT",
+  "XAUUSD"
+}async function getGoldSignal() {
+  try {
+    const response = await fetch(
+      "YOUR_GOLD_MARKET_DATA_API"
+    );
+
+    const data = await response.json();
+
+    console.log({
+      symbol: "XAUUSD",
+      status: "GOLD DATA RECEIVED",
+      data: data
+    });
+
+  } catch (error) {
+    console.log("Gold API not connected");
+  }
+ }const CONFIG = {
+  capital: 1000,
+  riskPercent: 1,
+  rewardRatio: 2,
+  dailyLossLimit: 2
+};
+
+const MARKETS = [
+  { symbol: "BTCUSDT", type: "crypto" },
+  { symbol: "ETHUSDT", type: "crypto" },
+  { symbol: "SOLUSDT", type: "crypto" },
+  { symbol: "XAUUSD", type: "gold" }
+];
+
+let botActive = false;
+let dailyLoss = 0;
+let trades = [];
+
+async function getCryptoData(symbol) {
+  const url =
+    `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=15m&limit=100`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error("Crypto API error");
+  }
+
+  const data = await response.json();
+
+  return data.map(c => ({
+    close: Number(c[4]),
+    high: Number(c[2]),
+    low: Number(c[3])
+  }));
+}
+
+async function getGoldData() {
+  const response = await fetch(
+    "/api/market/gold"
+  );
+
+  if (!response.ok) {
+    throw new Error("Gold API not connected");
+  }
+
+  const data = await response.json();
+
+  return data.candles;
+}
+
+function EMA(prices, period) {
+  const multiplier = 2 / (period + 1);
+  let value = prices[0];
+
+  for (let i = 1; i < prices.length; i++) {
+    value =
+      prices[i] * multiplier +
+      value * (1 - multiplier);
+  }
+
+  return value;
+}
+
+function RSI(prices, period = 14) {
+  let gain = 0;
+  let loss = 0;
+
+  for (
+    let i = prices.length - period;
+    i < prices.length;
+    i++
+  ) {
+    const change = prices[i] - prices[i - 1];
+
+    if (change > 0) gain += change;
+    else loss -= change;
+  }
+
+  if (loss === 0) return 100;
+
+  const rs = gain / loss;
+
+  return 100 - 100 / (1 + rs);
+}
+
+function analyzeMarket(candles) {
+  const prices = candles.map(c => Number(c.close));
+
+  if (prices.length < 60) {
+    return { signal: "WAIT" };
+  }
+
+  const ema20 = EMA(prices.slice(-60), 20);
+  const ema50 = EMA(prices.slice(-80), 50);
+  const rsi = RSI(prices);
+
+  let signal = "NO TRADE";
+
+  if (
+    ema20 > ema50 &&
+    rsi >= 50 &&
+    rsi <= 65
+  ) {
+    signal = "BUY";
+  }
+
+  if (
+    ema20 < ema50 &&
+    rsi >= 35 &&
+    rsi <= 50
+  ) {
+    signal = "SELL";
+  }
+
+  return {
+    price: prices[prices.length - 1],
+    ema20,
+    ema50,
+    rsi,
+    signal
+  };
+}
+
+async function scanMarket(market) {
+  try {
+    const candles =
+      market.type === "gold"
+        ? await getGoldData()
+        : await getCryptoData(market.symbol);
+
+    const result = analyzeMarket(candles);
+
+    const output = {
+      symbol: market.symbol,
+      ...result,
+      mode: "PAPER TRADING",
+      time: new Date().toISOString()
+    };
+
+    console.log(output);
+
+    return output;
+
+  } catch (error) {
+    console.error(
+      market.symbol,
+      error.message
+    );
+
+    return {
+      symbol: market.symbol,
+      signal: "DATA ERROR"
+    };
+  }
+}
+
+async function runBot() {
+  if (!botActive) return;
+
+  if (
+    dailyLoss >=
+    CONFIG.capital *
+    CONFIG.dailyLossLimit / 100
+  ) {
+    stopBot();
+    console.log("DAILY LOSS LIMIT REACHED");
+    return;
+  }
+
+  for (const market of MARKETS) {
+    if (!botActive) break;
+
+    const result = await scanMarket(market);
+
+    if (
+      result.signal === "BUY" ||
+      result.signal === "SELL"
+    ) {
+      trades.push(result);
+    }
+  }
+}
+
+let timer = null;
+
+function startBot() {
+  if (botActive) return;
+
+  botActive = true;
+
+  console.log("PATIL_TREDE BOT STARTED");
+
+  runBot();
+
+  timer = setInterval(runBot, 60000);
+}
+
+function stopBot() {
+  botActive = false;
+
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+  }
+
+  console.log("PATIL_TREDE BOT STOPPED");
+}
+
+function getTradeHistory() {
+  return trades;
+}
+
+module.exports = {
+  startBot,
+  stopBot,
+  runBot,
+  getTradeHistory
+};
   ],
   "colorTheme":"dark",
   "isTransparent":false,
