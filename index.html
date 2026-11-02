@@ -591,7 +591,7 @@ export default {
     const url = new URL(request.url);
     const path = url.pathname;
 
-    // CORS Headers (वेबसाईटसोबत कनेक्ट होण्यासाठी गरजेचे)
+    // CORS Headers 
     const corsHeaders = {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS",
@@ -652,9 +652,5 @@ export default {
     // ३. इतर कोणत्याही पाथसाठी
     return new Response(JSON.stringify({ error: "Endpoint not found" }), {
       status: 404,
-      headers: corsHeaders
-    });
-  }
-};
-
+   
  
